@@ -2,7 +2,7 @@
 * Turbojet Syntax Highlight - native javascript code highlighter for various langs
 *   (http://heap.tech)
 *
-* Copyright (c) 2015 Evgeny Zacharov
+* Copyright (c) 2015 zizzlezee / http://heap.tech/author/zizzlezee
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
 *   http://www.gnu.org/licenses/gpl.html
