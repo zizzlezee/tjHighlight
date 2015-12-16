@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Turbojet Syntax Highlight</title>
+    <script src="tjHighlight.core.js"></script>
+    <script src="tjHighlight.syntax.javascript.js"></script>
+    <link href="tjHighlight.css" rel="stylesheet" />
+    <link href="tjHighlight_javascript.css" rel="stylesheet" />
+</head>
+<body>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+
+            tjHighlight(
+                document.getElementById("test"),
+                {
+                    lines: true,
+                    onDblClick: function () {
+                        console.log('advanced click')
+                    }
+                });
+
+        }, false);
+
+    </script>
+    <div>
+<div id="test" syntax="js">
+    /*
+        Multiline comments
+    */
+    function javascript() {
+                
+        //Comment
+        var regex = /[0-9]*?/;
+        
+        var str = 'dsfdsfsd';
+
+        var obj = new Object();
+
+        var num = 0x10000;
+        
+        return;                 //return void
+    }
+</div>
+
+    </div>
+</body>
+</html>

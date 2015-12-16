@@ -1,0 +1,29 @@
+﻿div.tjHighlight_wrap.js 
+{}
+
+    div.tjHighlight_wrap.js span.keyword
+    {
+        color:#0066bd;
+        font-weight:bold;
+    }
+
+    div.tjHighlight_wrap.js span.string
+    {
+        color:#74007a;
+    }
+
+    div.tjHighlight_wrap.js span.regex
+    {
+        color:#49004d;
+    }
+
+    div.tjHighlight_wrap.js span.comments
+    {
+        color:#146700;
+    }
+
+        div.tjHighlight_wrap.js span.comments *
+        {
+            font-weight:normal;
+            color:#146700;
+        }
