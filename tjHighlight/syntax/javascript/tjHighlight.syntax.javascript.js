@@ -23,13 +23,13 @@
 
     if (tjHighlight &&
         typeof tjHighlight === "function") {
-
+        
         tjHighlight.prototype.Langs.push({
             Lang: syntaxLang,
             Version: syntaxVersion,
             ReplaceRule: [
                 {
-                    pattern: "(http[s]+://.*? )",
+                    pattern: "(http[s]?://.*?)",
                     replace: "<span class='link'><a>$</a></span>"
                 },
                 {
@@ -37,7 +37,7 @@
                     replace: "<span class='regex'>$</span>"
                 },
                 {
-                    pattern: "(//.*\\n)",
+                    pattern: "(//.*)",
                     replace: "<span class='comments'>$</span>"
                 },
                 {

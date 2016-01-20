@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Turbojet Syntax Highlight</title>
-    <script src="tjHighlight/tjHighlight.core.min.js"></script>
+    <script src="tjHighlight/tjHighlight.core.js"></script>
     <script src="tjHighlight/syntax/javascript/tjHighlight.syntax.javascript.js"></script>
 
     <link href="tjHighlight/tjHighlight.min.css" rel="stylesheet" />
@@ -27,25 +27,22 @@
 
     </script>
     <div>
-<div id="test" syntax="js">
-    /*
-        Multiline comments
-    */
-    function javascript() {
-                
-        //Comment
-        var regex = /[0-9]*?/;
-        
-        var str = 'dsfdsfsd';
+	<div id="test" syntax="js">
+		/* Multiline comments */
+		function javascript() {
+					
+			//Comment
+			var regex = /[0-9]*?/;
+			
+			var str = 'dsfdsfsd';
 
-        var obj = new Object();
+			var obj = new Object();
 
-        var num = 0x10000;
-        
-        return;                 //return void
-    }
-</div>
+			var num = 0x10000;
 
+			return;//return void
+		}
+	</div>
     </div>
 </body>
 </html>

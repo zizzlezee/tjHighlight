@@ -2,7 +2,7 @@
 * Turbojet Syntax Highlight - native javascript code highlighter for various langs
 *   (http://heap.tech)
 *
-* Copyright (c) 2015 zizzlezee / http://heap.tech/author/zizzlezee
+* Copyright (c) 2015-2016 zizzlezee / http://heap.tech/author/zizzlezee
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
 *   http://www.gnu.org/licenses/gpl.html
@@ -45,7 +45,7 @@
                         var basePattens = [
                             "('[\\s\\S]*?')",   //string in ''
                             "(\"[\\s\\S]*?\")", //string in ""
-                            "(\\n)",            //newline
+                            "(\\n)",            //\n
                             "(\\t)",            //tab
                             "(\\s{4})"          //4 spaces
                         ];
@@ -62,156 +62,194 @@
                         return new RegExp(basePattens.join('|'), "gim");
                     },
 
-                    highlightKeywords: function (keywords, sourceText) {
+                    splitLines: function (sourceCode) {
+                        
+                        const r = /[\r\n]/;
 
-                        var lines = sourceText.split('\n');
+                        var codeLine = [],
+                            prevLineBreak = 0;
+                        
+                        //check, if sourceCode contains only one line
+                        if (r.test(sourceCode)) {
+
+                            for (var i = 0; i < sourceCode.length; i++) {
+
+                                if (r.test(sourceCode.substr(i, 1))) {
+
+                                    codeLine.push(sourceCode.substring(prevLineBreak, i));
+
+                                    i++;
+
+                                    prevLineBreak = i + 1;
+
+                                }
+
+                            }
+
+                        }
+                        //just one line, isn't need to split line
+                        else {
+
+                            codeLine.push(sourceCode);
+
+                        }
+
+                        return codeLine;
+                    },
+
+                    highlightKeywords: function (keywords, sourceCodeLines) {
 
                         var regex = {};
 
-                        //remove empty spaces
-                        for (var l = 0 in lines) {
+                        //remove first and last empty spaces
+                        if (sourceCodeLines[0].length == 0)
+                            sourceCodeLines.splice(0, 1);
 
-                            if (lines[l].length == 0) {
-                                lines.splice(l * 1, 1);
-
-                                break;
-                            }
-                        }
+                        if (sourceCodeLines[sourceCodeLines.length - 1].length == 0)
+                            sourceCodeLines.splice(sourceCodeLines.length-1, 1);
 
                         //format keywords by temp signs ~void~
-                        for (var l = 0 in lines) {
+                        for (var l = 0 in sourceCodeLines) {
 
                             for (var k in keywords) {
 
-                                if (lines[l].length > 0) {
+                                if (sourceCodeLines[l].length > 0) {
 
                                     regex = new RegExp("(" + keywords[k] + ")(?:[\\s\\W]{1})", "gi");
 
-                                    if (regex.test(lines[l])) {
+                                    if (regex.test(sourceCodeLines[l])) {
 
-                                        lines[l] = lines[l].replace(regex, function (a, b) {
+                                        sourceCodeLines[l] = sourceCodeLines[l].replace(regex, function (a, b) {
 
                                             return '~' + b + '~' + a.slice(b.length);
 
                                         });
+
                                     }
                                 }
                             }
-
-                            if (core.Options.lines) {
-                                lines[l] = '@@' + (l * 1 + 1) + '@@' + lines[l];
-                            }
                         }
 
-                        return lines.join('\n');
+                        return sourceCodeLines;
                     },
 
-                    highlightAdvanced: function (patternObject, sourceText, advancedRulesArray) {
+                    highlightAdvanced: function (patternObject, sourceCodeLines, advancedRulesArray) {
 
-                        return sourceText.replace(patternObject, function (a, b) {
+                        for (var ln in sourceCodeLines) {
 
-                            var _regex = new RegExp(patternObject.source, "gim");
+                            sourceCodeLines[ln] = sourceCodeLines[ln].replace(patternObject, function (a, b) {
 
-                            var _gr = _regex.exec(a);
+                                var _regex = new RegExp(patternObject.source, "gim");
 
-                            if (_gr &&
-                                _gr.length > 0) {
+                                var _gr = _regex.exec(a);
 
-                                var i = 0;
+                                if (_gr &&
+                                    _gr.length > 0) {
 
-                                for (var g in _gr) {
+                                    var i = 0;
 
-                                    switch (i) {
+                                    for (var g in _gr) {
 
-                                        case 1:                 //string in quotes
+                                        switch (i) {
 
-                                            if (typeof _gr[g] === "string") {
-                                                return `<span class='string'>${a
-                                                    .replace(/\n/gim, "<br/>\n")
-                                                    .replace(/\s{4}|\t/gim, "<span class='tab'></span>")}</span>`;
-                                            }
+                                            case 1:                 //string in quotes
 
-                                            break;
+                                                if (typeof _gr[g] === "string") {
+                                                    return `<span class='string'>${a
+                                                        .replace(/\n/gim, "<br/>\n")
+                                                        .replace(/\s{4}|\t/gim, "<span class='tab'></span>")}</span>`;
+                                                }
 
-                                        case 2:                 //string in double quotes
+                                                break;
 
-                                            if (typeof _gr[g] === "string") {
-                                                return `<span class='string'>${a
-                                                    .replace(/\n/gim, "<br/>\n")
-                                                    .replace(/\s{4}|\t/gim, "<span class='tab'></span>")}</span> `;
-                                            }
+                                            case 2:                 //string in double quotes
 
-                                            break;
+                                                if (typeof _gr[g] === "string") {
+                                                    return `<span class='string'>${a
+                                                        .replace(/\n/gim, "<br/>\n")
+                                                        .replace(/\s{4}|\t/gim, "<span class='tab'></span>")}</span> `;
+                                                }
 
-                                        case 3:                 //newline
+                                                break;
 
-                                            if (typeof _gr[g] === "string") {
-                                                return "<br/>\n";
-                                            }
+                                            case 3:                 //newline
 
-                                            break;
+                                                if (typeof _gr[g] === "string") {
+                                                    return "<span class='tab'></span>";
+                                                }
 
-                                        case 4:                 //tab
+                                                break;
 
-                                            if (typeof _gr[g] === "string") {
-                                                return "<span class='tab'></span>";
-                                            }
+                                            case 4:                 //tab
 
-                                            break;
+                                                if (typeof _gr[g] === "string") {
+                                                    return "<span class='tab'></span>";
+                                                }
 
-                                        case 5:                 //4 spaces on a row -> "    ". Like one tab
+                                                break;
 
-                                            if (typeof _gr[g] === "string") {
-                                                return "<span class='tab'></span>";
-                                            }
+                                            case 5:                 //4 spaces on a row -> "    ". Like one tab
 
-                                            break;
+                                                if (typeof _gr[g] === "string") {
+                                                    return "<span class='tab'></span>";
+                                                }
 
-                                        default:
+                                                break;
 
-                                            if (i > 5 &&
-                                                typeof _gr[g] === "string") {
+                                            default:
 
-                                                try {
-                                                    if (advancedRulesArray &&
-                                                        advancedRulesArray[i - 6] &&
-                                                        advancedRulesArray[i - 6].replace) {
+                                                if (i > 5 &&
+                                                    typeof _gr[g] === "string") {
 
-                                                        return ((replaceTemplate, replaceValue) => {
+                                                    try {
+                                                        if (advancedRulesArray &&
+                                                            advancedRulesArray[i - 6] &&
+                                                            advancedRulesArray[i - 6].replace) {
 
-                                                            return replaceTemplate.replace(/(\$)/gim, replaceValue
-                                                                .replace(/(\n)/g, "<br/>\n")
-                                                                .replace(/(\s{4}|\t)/g, "<span class='tab'></span>"));
+                                                            return ((replaceTemplate, replaceValue) => {
 
-                                                        })(advancedRulesArray[i - 6].replace, _gr[g]);
+                                                                return replaceTemplate.replace(/(\$)/gim, replaceValue
+                                                                    .replace(/(\n)/g, "<br/>\n")
+                                                                    .replace(/(\s{4}|\t)/g, "<span class='tab'></span>"));
+
+                                                            })(advancedRulesArray[i - 6].replace, _gr[g]);
+                                                        }
+                                                        else throw { message: "syntax advanced rules array index error" };
                                                     }
-                                                    else throw { message: "syntax advanced rules array index error" };
-                                                }
-                                                catch (e) {
-                                                    console.error(`error accessing to syntax advanced rule template ${e.message}`);
+                                                    catch (e) {
+                                                        console.error(`error accessing to syntax advanced rule template ${e.message}`);
+                                                    }
+
+                                                    return "";
                                                 }
 
-                                                return "";
-                                            }
-
-                                            break;
+                                                break;
+                                        }
+                                        i++;
                                     }
-                                    i++;
                                 }
-                            }
-                            return;
-                        });
-                    },
+                                return;
+                            });
 
-                    highlightFinally: function (sourceText) {
-
-                        var replaced = sourceText.replace(/~(.*?)~/gi, "<span class='keyword'>$1</span>")
-
-                        if (core.Options.lines) {
-                            replaced = replaced.replace(/@@([0-9]{1,5})@@/g, "<div class='linenum'>$1</div>");
                         }
 
-                        return replaced;
+                        return sourceCodeLines;
+                    },
+
+                    highlightFinally: function (sourceCodeLines) {
+
+                        for (var i = 0; i < sourceCodeLines.length; i++) {
+
+                            if (core.Options.lines)
+                                sourceCodeLines[i] = '<div class="linenum">' + (i+1) + '</div>' + sourceCodeLines[i].replace(/~(.*?)~/gi, "<span class='keyword'>$1</span>");
+
+                            else
+                                sourceCodeLines[i] = sourceCodeLines[i].replace(/~(.*?)~/gi, "<span class='keyword'>$1</span>");
+
+                        }
+
+                        return sourceCodeLines.join('<br/>');
+
                     }
 
                 };
@@ -251,7 +289,9 @@
 
                                     var readable = [];
 
-                                    var highlightedKeywords = _methods.highlightKeywords(tjHighlight.prototype.Langs[i].Keywords, this.Element.innerHTML)
+                                    var codeLines = _methods.splitLines(this.Element.innerHTML);
+                                   
+                                    var highlightedKeywords = _methods.highlightKeywords(tjHighlight.prototype.Langs[i].Keywords, codeLines)
 
                                     var advancedHighlight = _methods.highlightAdvanced(this.Pattern, highlightedKeywords, tjHighlight.prototype.Langs[i].ReplaceRule);
 
