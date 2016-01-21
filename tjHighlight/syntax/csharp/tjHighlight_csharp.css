@@ -1,0 +1,24 @@
+﻿div.tjHighlight_wrap.csharp
+{}
+    
+	div.tjHighlight_wrap.csharp span.keyword
+	{
+        color:#0066bd;
+        font-weight:bold;
+    }
+
+	div.tjHighlight_wrap.csharp span.string
+	{
+        color:#74007a;
+    }
+
+	div.tjHighlight_wrap.csharp span.comments
+	{
+        color:#146700;
+    }
+
+		div.tjHighlight_wrap.csharp span.comments *
+        {
+            font-weight:normal;
+            color:#146700;
+        }

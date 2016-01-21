@@ -1,8 +1,8 @@
 ﻿/*
 * Javascript language library for Turbojet Syntax Highlight
-*   (http://highlight.heap.tech)
+*   (http://heap.tech/author/zizzleZee)
 *
-* Copyright (c) 2015 Evgeny Zacharov
+* Copyright (c) 2015-2016 Evgeny Zacharov
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
 *   http://www.gnu.org/licenses/gpl.html
@@ -13,6 +13,8 @@
     "use strict"
 
     const syntaxLang = "js|javascript";
+
+    const cssSyntaxSelector = 'js';
 
     const syntaxVersion = "0.0.1a";
 
@@ -26,6 +28,7 @@
         
         tjHighlight.prototype.Langs.push({
             Lang: syntaxLang,
+            cssSelector: cssSyntaxSelector,
             Version: syntaxVersion,
             ReplaceRule: [
                 {

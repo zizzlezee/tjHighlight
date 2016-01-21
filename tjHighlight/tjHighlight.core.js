@@ -23,6 +23,7 @@
             },
             Element: {},
             Pattern: {},
+            CssClass: "",
             ApplyOptions: function (o) {
 
                 for (var io in options) {
@@ -72,19 +73,7 @@
                         //check, if sourceCode contains only one line
                         if (r.test(sourceCode)) {
 
-                            for (var i = 0; i < sourceCode.length; i++) {
-
-                                if (r.test(sourceCode.substr(i, 1))) {
-
-                                    codeLine.push(sourceCode.substring(prevLineBreak, i));
-
-                                    i++;
-
-                                    prevLineBreak = i + 1;
-
-                                }
-
-                            }
+                            codeLine = sourceCode.split('\n');
 
                         }
                         //just one line, isn't need to split line
@@ -99,38 +88,46 @@
 
                     highlightKeywords: function (keywords, sourceCodeLines) {
 
-                        var regex = {};
+                        if (Object.prototype.toString.call(sourceCodeLines) === "[object Array]" &&
+                            sourceCodeLines.length) {
 
-                        //remove first and last empty spaces
-                        if (sourceCodeLines[0].length == 0)
-                            sourceCodeLines.splice(0, 1);
+                            //remove first and last empty spaces
+                            if (sourceCodeLines[0].length == 0)
+                                sourceCodeLines.splice(0, 1);
 
-                        if (sourceCodeLines[sourceCodeLines.length - 1].length == 0)
-                            sourceCodeLines.splice(sourceCodeLines.length-1, 1);
+                            if (sourceCodeLines.length > 0 &&
+                                sourceCodeLines[sourceCodeLines.length - 1].length == 0)
+                                sourceCodeLines.splice(sourceCodeLines.length - 1, 1);
 
-                        //format keywords by temp signs ~void~
-                        for (var l = 0 in sourceCodeLines) {
+                            var regex;
 
-                            for (var k in keywords) {
+                            //format keywords by temp signs ~void~
+                            for (var l = 0 in sourceCodeLines) {
 
-                                if (sourceCodeLines[l].length > 0) {
+                                for (var k in keywords) {
 
-                                    regex = new RegExp("(" + keywords[k] + ")(?:[\\s\\W]{1})", "gi");
+                                    if (sourceCodeLines[l].length > 0) {
 
-                                    if (regex.test(sourceCodeLines[l])) {
+                                        regex = new RegExp("(" + keywords[k] + ")(?:[\\s\\W]{1})", "gi");
 
-                                        sourceCodeLines[l] = sourceCodeLines[l].replace(regex, function (a, b) {
+                                        if (regex.test(sourceCodeLines[l])) {
 
-                                            return '~' + b + '~' + a.slice(b.length);
+                                            sourceCodeLines[l] = sourceCodeLines[l].replace(regex, function (a, b) {
 
-                                        });
+                                                return '~' + b + '~' + a.slice(b.length);
 
+                                            });
+
+                                        }
                                     }
                                 }
                             }
+
+                            
                         }
 
                         return sourceCodeLines;
+
                     },
 
                     highlightAdvanced: function (patternObject, sourceCodeLines, advancedRulesArray) {
@@ -269,6 +266,8 @@
 
                                 var _protoLangs = tjHighlight.prototype.Langs;
 
+                                var _lang;
+
                                 var i = 0;
 
                                 for (i in _protoLangs) {
@@ -278,6 +277,8 @@
                                     if (_protoLangs[i] &&
                                         _protoLangs[i].Lang &&
                                         _protoLangs[i].Lang.indexOf(_elemSyntax) >= 0) {
+
+                                        this.CssClass = _protoLangs[i].cssSelector;
 
                                         this.Pattern = _methods.createPattern(_protoLangs[i].ReplaceRule);
 
@@ -297,7 +298,7 @@
 
                                     var finallyHighlight = _methods.highlightFinally(advancedHighlight);
 
-                                    readable.push(`<div class='tjHighlight_wrap ${_elemSyntax}'>`);
+                                    readable.push(`<div class='tjHighlight_wrap ${this.CssClass}'>`);
 
                                     readable.push(finallyHighlight);
 

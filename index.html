@@ -6,16 +6,27 @@
     <title>Turbojet Syntax Highlight</title>
     <script src="tjHighlight/tjHighlight.core.js"></script>
     <script src="tjHighlight/syntax/javascript/tjHighlight.syntax.javascript.js"></script>
+    <script src="tjHighlight/syntax/csharp/tjHighlight.syntax.csharp.js"></script>
 
     <link href="tjHighlight/tjHighlight.min.css" rel="stylesheet" />
     <link href="tjHighlight/syntax/javascript/tjHighlight_javascript.css" rel="stylesheet" />
+    <link href="tjHighlight/syntax/csharp/tjHighlight_csharp.css" rel="stylesheet" />
 </head>
 <body>
     <script>
         window.addEventListener('DOMContentLoaded', function () {
 
             tjHighlight(
-                document.getElementById("test"),
+                document.getElementById("test_js"),
+                {
+                    lines: true,
+                    onDblClick: function () {
+                        console.log('advanced click')
+                    }
+                });
+
+            tjHighlight(
+                document.getElementById("test_c#"),
                 {
                     lines: true,
                     onDblClick: function () {
@@ -27,22 +38,51 @@
 
     </script>
     <div>
-	<div id="test" syntax="js">
-		/* Multiline comments */
-		function javascript() {
+        <h1>Javascript syntax highlight</h1>
+	    <div id="test_js" syntax="js">
+		    /* Multiline comments */
+		    function javascript() {
 					
-			//Comment
-			var regex = /[0-9]*?/;
+			    //Comment
+			    var regex = /[0-9]*?/;
 			
-			var str = 'dsfdsfsd';
+			    var str = 'dsfdsfsd';
 
-			var obj = new Object();
+			    var obj = new Object();
 
-			var num = 0x10000;
+			    var num = 0x10000;
 
-			return;//return void
-		}
-	</div>
+			    return;//return void
+		    }
+	    </div>
+
+        <h1>C# syntax highlight</h1>
+        <div id="test_c#" syntax="c#">
+            class Program
+            {
+                const byte XOR_KEY = 0xFF;
+
+                const string MESSAGE_BODY = "▼Hi!\nHow are you?\n\t Fine, thanks▲";
+
+                static void Main(string[] args)
+                {
+                    var str_bin = System.Text.Encoding.UTF8.GetBytes(Program.MESSAGE_BODY);
+
+                    var crypted_str_bin = new byte[str_bin.Length];
+
+                    for (var c = 0; c < str_bin.Length; c++)
+                        crypted_str_bin[c] = (byte)(str_bin[c] ^ Program.XOR_KEY);
+                    
+                    Console.WriteLine(string.Format("crypted message:\n{0}\n\n", System.Text.Encoding.UTF8.GetString(crypted_str_bin)));
+                    
+                    for (var c = 0; c < str_bin.Length; c++)
+                        crypted_str_bin[c] = (byte)(crypted_str_bin[c] ^ XOR_KEY);
+                   
+                    Console.WriteLine(string.Format("decrypted message:\n{0}", System.Text.Encoding.UTF8.GetString(crypted_str_bin)));
+                }
+            }
+
+        </div>
     </div>
 </body>
 </html>
